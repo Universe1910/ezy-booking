@@ -7,7 +7,7 @@ aliyun-oss:
   base-path: yourBasePath
 autocode:
   transfer-restart: true
-  root: /Users/tinhphan/workspace/udoo-pushing-central
+  root: /Users/tinhphan/workspace/ezy-booking
   server: /server
   server-api: /api/v1/%s
   server-plug: /plugin/%s
