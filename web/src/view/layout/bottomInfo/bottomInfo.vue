@@ -3,12 +3,12 @@
     <div>
       <span>Powered by</span>
       <span>
-        <a href="https://udoo.ooo">{{ $GIN_VUE_ADMIN.appName }}</a>
+        <a href="#">{{ $GIN_VUE_ADMIN.appName }}</a>
       </span>
       <el-divider direction="vertical" />
       <span>Copyright</span>
       <span>
-        <a href="https://udoo.ooo">Udoo</a>
+        <a href="#">Ezy Booking</a>
       </span>
     </div>
   </div>

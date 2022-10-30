@@ -12,6 +12,7 @@ type EzyStage struct {
       Name  string `json:"name" form:"name" gorm:"column:name;comment:;"`
       Address  string `json:"address" form:"address" gorm:"column:address;comment:;"`
       MapURL  string `json:"mapURL" form:"mapURL" gorm:"column:map_url;comment:;"`
+      Branch string `json:"branch" form:"branch" gorm:"column:branch;comment:;"`
 }
 
 

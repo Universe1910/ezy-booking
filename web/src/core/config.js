@@ -3,8 +3,8 @@
  */
 
 const config = {
-  appName: 'Puhsing Central',
-  appLogo: 'https://dl.dropboxusercontent.com/s/1k19249eifen3e8/Udoo%20Square.png',
+  appName: 'Ezy Booking',
+  appLogo: 'https://universe1910.com/wp-content/uploads/2022/08/Asset-3.png',
   showViteLogo: true
 }
 
