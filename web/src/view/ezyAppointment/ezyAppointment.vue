@@ -13,7 +13,10 @@
         </el-form-item>
         <el-form-item label="Singer">
           <el-input v-model="searchInfo.singer" placeholder="Singer" />
-
+        </el-form-item>
+        <el-form-item label="Date">
+          <el-date-picker v-model="searchInfo.appointmentDate" type="date" placeholder="Appointmetn Date">
+          </el-date-picker>
         </el-form-item>
         <el-form-item>
           <el-button size="small" type="primary" icon="search" @click="onSubmit">Search</el-button>
@@ -45,10 +48,10 @@
         <el-table-column align="left" label="Date">
           <template #default="scope">{{ formatDate(scope.row.appointmentDate) }}</template>
         </el-table-column>
-        <el-table-column align="left" label="Start At" >
+        <el-table-column align="left" label="Start At">
           <template #default="scope">{{ formatDate(scope.row.startAt) }}</template>
         </el-table-column>
-        <el-table-column align="left" label="End At" >
+        <el-table-column align="left" label="End At">
           <template #default="scope">{{ formatDate(scope.row.endAt) }}</template>
         </el-table-column>
         <el-table-column align="left" label="Stage" prop="stage" />
@@ -59,17 +62,17 @@
         <!-- <el-table-column align="left" label="Allow Bus" prop="allowBus" width="120">
           <template #default="scope">{{ formatBoolean(scope.row.allowBus) }}</template>
         </el-table-column> -->
-        <el-table-column align="left" label="By" prop="createdBy"  />
-        <el-table-column align="left" label="Branch" prop="branch"  />
+        <el-table-column align="left" label="By" prop="createdBy" />
+        <el-table-column align="left" label="Branch" prop="branch" />
         <!-- <el-table-column align="left" label="Featured Image" prop="featuredImage" width="120" /> -->
         <el-table-column align="left" label="Status" prop="status" />
-        <el-table-column align="left" label="At" >
+        <el-table-column align="left" label="At">
           <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
         </el-table-column>
         <el-table-column align="left" label="Action">
           <template #default="scope">
             <el-button type="primary" link icon="edit" size="small" class="table-button"
-              @click="updateEzyAppointmentFunc(scope.row)">Edit</el-button>
+              @click="pushToAppointmentEdit(scope.row)">Edit</el-button>
             <el-button type="primary" link icon="delete" size="small" @click="deleteRow(scope.row)">Delete </el-button>
           </template>
         </el-table-column>
@@ -81,29 +84,29 @@
       </div>
     </div>
     <el-dialog v-model="dialogFormVisible" :before-close="closeDialog" title="Add new">
-      <el-form :model="formData" label-position="right" ref="elFormRef" :rules="rule" label-width="80px">
+      <el-form :model="formData" label-position="right" ref="elFormRef" :rules="rule" label-width="150px">
         <el-form-item label="Appointment Name:" prop="appointmentName">
-          <el-input v-model="formData.appointmentName" :clearable="false" placeholder="请输入" />
+          <el-input v-model="formData.appointmentName" :clearable="false" placeholder="Appointment Name" />
         </el-form-item>
-        <el-form-item label="Singer:" prop="singer">
+        <!-- <el-form-item label="Singer:" prop="singer">
           <el-input v-model="formData.singer" :clearable="false" placeholder="请输入" />
-        </el-form-item>
-        <el-form-item label="Appointment Date:" prop="appointmentDate">
+        </el-form-item> -->
+        <!-- <el-form-item label="Appointment Date:" prop="appointmentDate">
           <el-date-picker v-model="formData.appointmentDate" type="date" style="width:100%" placeholder="选择日期"
             :clearable="false" />
-        </el-form-item>
-        <el-form-item label="Start At:" prop="startAt">
+        </el-form-item> -->
+        <!-- <el-form-item label="Start At:" prop="startAt">
           <el-date-picker v-model="formData.startAt" type="date" style="width:100%" placeholder="选择日期"
             :clearable="false" />
-        </el-form-item>
-        <el-form-item label="End At:" prop="endAt">
+        </el-form-item> -->
+        <!-- <el-form-item label="End At:" prop="endAt">
           <el-date-picker v-model="formData.endAt" type="date" style="width:100%" placeholder="选择日期"
             :clearable="false" />
-        </el-form-item>
-        <el-form-item label="Appointment Content:" prop="appointmentContent">
+        </el-form-item> -->
+        <!-- <el-form-item label="Appointment Content:" prop="appointmentContent">
           <el-input v-model="formData.appointmentContent" :clearable="true" placeholder="请输入" />
-        </el-form-item>
-        <el-form-item label="Appointment Note:" prop="appointmentNote">
+        </el-form-item> -->
+        <!-- <el-form-item label="Appointment Note:" prop="appointmentNote">
           <el-input v-model="formData.appointmentNote" :clearable="true" placeholder="请输入" />
         </el-form-item>
         <el-form-item label="Stage:" prop="stage">
@@ -140,12 +143,12 @@
         </el-form-item>
         <el-form-item label="Status:" prop="status">
           <el-input v-model="formData.status" :clearable="false" placeholder="请输入" />
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <template #footer>
         <div class="dialog-footer">
-          <el-button size="small" @click="closeDialog">取 消</el-button>
-          <el-button size="small" type="primary" @click="enterDialog">确 定</el-button>
+          <el-button size="small" @click="closeDialog">Cancel</el-button>
+          <el-button size="small" type="primary" @click="enterDialog">Create</el-button>
         </div>
       </template>
     </el-dialog>
@@ -172,6 +175,10 @@ import {
 import { getDictFunc, formatDate, formatBoolean, filterDict } from '@/utils/format'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { ref, reactive } from 'vue'
+import { useRouter } from 'vue-router'
+import RouterHolder from '../routerHolder.vue';
+
+const router = useRouter()
 
 // 自动化生成的字典（可能为空）以及字段
 const formData = ref({
@@ -192,7 +199,7 @@ const formData = ref({
   createdBy: 0,
   branch: 0,
   featuredImage: '',
-  status: '',
+  status: 'draft',
 })
 
 // 验证规则
@@ -202,51 +209,51 @@ const rule = reactive({
     message: 'Appointment name can\'t be empty',
     trigger: ['input', 'blur'],
   }],
-  singer: [{
-    required: true,
-    message: 'Singer can\'t be empty',
-    trigger: ['input', 'blur'],
-  }],
-  appointmentDate: [{
-    required: true,
-    message: 'Appointment date can\'t be empty',
-    trigger: ['input', 'blur'],
-  }],
-  startAt: [{
-    required: true,
-    message: 'Start at can\'t be empty',
-    trigger: ['input', 'blur'],
-  }],
-  endAt: [{
-    required: true,
-    message: 'End at can\'t be empty',
-    trigger: ['input', 'blur'],
-  }],
-  stage: [{
-    required: true,
-    message: 'Stage can\'t be empty',
-    trigger: ['input', 'blur'],
-  }],
-  stageMap: [{
-    required: true,
-    message: 'Stage map can\'t be empty',
-    trigger: ['input', 'blur'],
-  }],
-  stageArea: [{
-    required: true,
-    message: 'Stage Area can\'t be empty',
-    trigger: ['input', 'blur'],
-  }],
-  branch: [{
-    required: true,
-    message: '',
-    trigger: ['input', 'blur'],
-  }],
-  status: [{
-    required: true,
-    message: '',
-    trigger: ['input', 'blur'],
-  }],
+  // singer: [{
+  //   required: true,
+  //   message: 'Singer can\'t be empty',
+  //   trigger: ['input', 'blur'],
+  // }],
+  // appointmentDate: [{
+  //   required: true,
+  //   message: 'Appointment date can\'t be empty',
+  //   trigger: ['input', 'blur'],
+  // }],
+  // startAt: [{
+  //   required: true,
+  //   message: 'Start at can\'t be empty',
+  //   trigger: ['input', 'blur'],
+  // }],
+  // endAt: [{
+  //   required: true,
+  //   message: 'End at can\'t be empty',
+  //   trigger: ['input', 'blur'],
+  // }],
+  // stage: [{
+  //   required: true,
+  //   message: 'Stage can\'t be empty',
+  //   trigger: ['input', 'blur'],
+  // }],
+  // stageMap: [{
+  //   required: true,
+  //   message: 'Stage map can\'t be empty',
+  //   trigger: ['input', 'blur'],
+  // }],
+  // stageArea: [{
+  //   required: true,
+  //   message: 'Stage Area can\'t be empty',
+  //   trigger: ['input', 'blur'],
+  // }],
+  // branch: [{
+  //   required: true,
+  //   message: '',
+  //   trigger: ['input', 'blur'],
+  // }],
+  // status: [{
+  //   required: true,
+  //   message: '',
+  //   trigger: ['input', 'blur'],
+  // }],
 })
 
 const elFormRef = ref()
@@ -375,6 +382,22 @@ const updateEzyAppointmentFunc = async (row) => {
   }
 }
 
+const pushToAppointmentEdit = (row) => {
+  // route.push("ezyAppointmentEdit",
+  // {
+
+  // })
+
+  router.push({
+    name: 'ezyAppointmentEdit',
+    params: {
+      id: row.ID
+    }
+  })
+}
+
+
+
 
 // Delete 行
 const deleteEzyAppointmentFunc = async (row) => {
@@ -421,7 +444,7 @@ const closeDialog = () => {
     createdBy: 0,
     branch: 0,
     featuredImage: '',
-    status: '',
+    status: 'draft',
   }
 }
 // 弹窗确定

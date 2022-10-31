@@ -8,8 +8,8 @@
         <button v-on:click="exportHtml">Export HTML</button>
       </div> -->
       <el-row class="mb-4">
-        <el-button type="primary" @click="saveDesign">Save</el-button>
-        <el-button type="success" @click="exportHtml">Export HTML</el-button>
+        <!-- <el-button type="primary" @click="saveDesign">Save</el-button> -->
+        <el-button type="primary" @click="exportHtml">Save</el-button>
       </el-row>
 
       <EmailEditor ref="emailEditor" v-on:load="editorLoaded" v-on:ready="editorReady" />
@@ -20,57 +20,55 @@
 <script>
 export default {
   name: 'emailBuilder',
-  components: {
-    EmailEditor
-  },
-  data() {
-    return {
-      height: '800px',
-      locale: 'en',
-      projectId: 0, // replace with your project id
-      tools: {
-        // disable image tool
-        image: {
-          enabled: true,
-        },
-      },
-      options: {},
-      appearance: {
-        theme: 'dark',
-        panels: {
-          tools: {
-            dock: 'right',
-          },
-        },
-      },
-    };
-  },
+  // components: {
+  //   EmailEditor
+  // },
+  // data() {
+  //   return {
+  //     height: '800px',
+  //     locale: 'en',
+  //     projectId: 0, // replace with your project id
+  //     tools: {
+  //       // disable image tool
+  //       image: {
+  //         enabled: true,
+  //       },
+  //     },
+  //     options: {},
+  //     appearance: {
+  //       theme: 'dark',
+  //       panels: {
+  //         tools: {
+  //           dock: 'right',
+  //         },
+  //       },
+  //     },
+  //   };
+  // },
 
-  methods: {
-    editorLoaded() {
-      console.log('editorLoaded');
-      // this.$refs.emailEditor.editor.loadDesign({});
-      // this.emailPanel = this.$refs.emailEditor;
-      let emailPanel = this.$refs.emailEditor;
-    },
-    // called when the editor has finished loading
-    editorReady() {
-      console.log('editorReady');
-    },
-    saveDesign() {
-      this.$refs.emailEditor.editor.saveDesign((design) => {
-        console.log('saveDesign', design);
-      });
-    },
-    exportHtml() {
-      this.$refs.emailEditor.editor.exportHtml((data) => {
-        
-        console.log('exportHtml', data);
-        this.updateEmailContent(data);
-      });
-    },
+  // methods: {
+  //   editorLoaded() {
+  //     console.log('editorLoaded');
+  //     this.$refs.emailEditor.editor.loadDesign({});
+  //   },
+  //   // called when the editor has finished loading
+  //   editorReady() {
+  //     console.log('editorReady');
+  //   },
+  //   saveDesign() {
+  //     this.$refs.emailEditor.editor.saveDesign((design) => {
+  //       console.log('saveDesign', design);
+  //     });
+  //   },
+  //   exportHtml() {
+  //     this.$refs.emailEditor.editor.exportHtml((data) => {
 
-  }
+  //       console.log('exportHtml', data);
+  //       this.updateEmailContent(data);
+  //     });
+  //   },
+
+  // }
 }
 </script>
 
@@ -94,6 +92,56 @@ const email = ref(null);
 
 const searchInfo = ref({ emailTemplateId: Number(route.params.id) })
 
+
+// const emailEditor = ref({
+//   height: '800px',
+//   locale: 'en',
+//   projectId: 0, // replace with your project id
+//   tools: {
+//     // disable image tool
+//     image: {
+//       enabled: true,
+//     },
+//   },
+//   options: {},
+//   appearance: {
+//     theme: 'dark',
+//     panels: {
+//       tools: {
+//         dock: 'right',
+//       },
+//     },
+//   },
+// })
+
+const emailEditor = ref(null)
+
+const editorLoaded = () => {
+  console.log('editorLoaded');
+  // this.$refs.emailEditor.editor.loadDesign({});
+  // emailEditor.value.editor.loadDesign({});
+}
+
+
+// called when the editor has finished loading
+const editorReady = () => {
+  console.log('editorReady');
+}
+
+// const saveDesign = () => {
+//   emailEditor.value.editor.saveDesign((design) => {
+//     console.log('saveDesign', design);
+//   });
+// }
+
+const exportHtml = () => {
+  emailEditor.value.editor.exportHtml((data) => {
+    console.log('exportHtml', data);
+    updateEmailContent(data);
+  })
+}
+
+
 const getEmail = async () => {
   console.log('getEmail');
   const id = searchInfo.value.emailTemplateId;
@@ -101,28 +149,15 @@ const getEmail = async () => {
   email.value = response.data.reemail_template;
   const emailContent = JSON.parse(email.value.content);
   console.log(emailContent);
-  // console.log(this.$refs)
+  emailEditor.value.editor.loadDesign(emailContent.design);
 }
 
 getEmail()
 
 onBeforeRouteUpdate((to, form) => {
-console.log('onBeforeRouteUpdate');
+  console.log('onBeforeRouteUpdate');
 })
 
-
-// watch(() => {
-  
-//   console.log('watch');
-//   // console.log(this.$refs);
-// })
-
-
-// watch(() => this.$refs.emailEditor, (editor) => {
-//   // searchInfo.value.ID = Number(id)
-//   // getDocument()
-//   console.log('watch');
-// })
 
 const updateEmailContent = async (data) => {
   const id = email.value.ID;
@@ -145,7 +180,6 @@ const updateEmailContent = async (data) => {
     })
   }
 }
-
 
 
 </script>

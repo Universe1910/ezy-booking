@@ -50,7 +50,7 @@
           <template #default="scope">
             <el-button size="small" type="primary" link icon="edit" @click="updateSysDictionaryDetailFunc(scope.row)">Change</el-button>
             <el-popover v-model="scope.row.visible" placement="top" width="160">
-              <p>You sure you want to delete it?？</p>
+              <p>You sure you want to delete it?</p>
               <div style="text-align: right; margin-top: 8px;">
                 <el-button size="small" type="primary" link @click="scope.row.visible = false">Cancel</el-button>
                 <el-button type="primary" size="small" @click="deleteSysDictionaryDetailFunc(scope.row)">Sure</el-button>

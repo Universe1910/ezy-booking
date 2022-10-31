@@ -142,7 +142,7 @@ func Verify(st interface{}, roleMap Rules) (err error) {
 				switch {
 				case v == "notEmpty":
 					if isBlank(val) {
-						return errors.New(tagVal.Name + "值不能为空")
+						return errors.New(tagVal.Name + "The value cannot be empty")
 					}
 				case strings.Split(v, "=")[0] == "regexp":
 					if !regexpMatch(strings.Split(v, "=")[1], val.String()) {

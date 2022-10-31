@@ -41,7 +41,8 @@ func (ezyAppointmentService *EzyAppointmentService)UpdateEzyAppointment(ezyAppoi
 // GetEzyAppointment 根据id获取EzyAppointment记录
 // Author [piexlmax](https://github.com/piexlmax)
 func (ezyAppointmentService *EzyAppointmentService)GetEzyAppointment(id uint) (ezyAppointment Booking.EzyAppointment, err error) {
-	err = global.GVA_DB.Where("id = ?", id).First(&ezyAppointment).Error
+	// err = global.GVA_DB.Where("id = ?", id).First(&ezyAppointment).Error
+	err = global.GVA_DB.Where("id = ?", id).Preload("StageObject").First(&ezyAppointment).Error
 	return
 }
 
