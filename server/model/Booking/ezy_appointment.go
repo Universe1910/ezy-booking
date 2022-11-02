@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
+	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
 )
 
 // EzyAppointment 结构体
@@ -32,9 +33,9 @@ type EzyAppointment struct {
 
 	// `json:"createdObject" form:"createdObject" gorm:"foreignKey:CreatedBy"`
 
-	// StageObject EzyStage `json:stageObject" form:"stageObject" gorm:"foreignKey:StageID"`
-	// BranchObject EzyBranch      `json:branchObject" form:"branchObject" gorm:"foreignKey:BranchID"`
-	// UserObject   system.SysUser `json:userObject" form:"userObject" gorm:foreignKey:CreatedBy"`
+	StageObject  EzyStage       `json:"stageObject" form:"stageObject" gorm:"foreignKey:StageID"`
+	BranchObject EzyBranch      `json:"branchObject" form:"branchObject" gorm:"foreignKey:BranchID"`
+	UserObject   system.SysUser `json:"userObject" form:"userObject" gorm:"foreignKey:CreatedBy"`
 }
 
 // TableName EzyAppointment 表名

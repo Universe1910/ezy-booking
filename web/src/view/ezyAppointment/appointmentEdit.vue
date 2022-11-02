@@ -69,7 +69,7 @@
         </div>
         <el-form-item label="Stage" label-width="80px" prop="stage">
           <el-select v-model="formData.stage" class="full-width-input" clearable placeholder="Pick a stage">
-            <el-option v-for="(item, index) in stageOptions" :key="index" :label="item.label" :value="item.value"
+            <el-option v-for="item in stageOptions" :key="item.ID" :label="item.name" :value="item.ID"
               :disabled="item.disabled"></el-option>
           </el-select>
         </el-form-item>
@@ -160,8 +160,8 @@
         </div>
         <el-form-item label="Branch" label-width="80px" prop="branch">
           <el-radio-group v-model="formData.branch">
-            <el-radio v-for="(item, index) in branchOptions" :key="index" :label="item.value" :disabled="item.disabled"
-              style="{display: inline}">{{ item.label }}</el-radio>
+            <el-radio v-for="item in branchOptions" :key="item.ID" :label="item.name" :disabled="item.disabled"
+              style="{display: inline}">{{ item.name }}</el-radio>
           </el-radio-group>
         </el-form-item>
       </el-col>
@@ -187,6 +187,17 @@ import {
   findEzyAppointment,
 } from '@/api/ezyAppointment'
 
+import {
+  getEzyBranchList
+} from '@/api/ezyBranch'
+
+import {
+  getEzyStageList
+} from '@/api/ezyStage'
+
+import {
+  getUserList,
+} from '@/api/user'
 
 const route = useRoute()
 
@@ -313,6 +324,39 @@ const getEzyAppointmentById = async () => {
 }
 
 getEzyAppointmentById();
+
+
+// const getAuthors = async () => {
+//   const table = await getUserList()
+//   if (table.code === 0) {
+//     authorOptions.value = table.data.list
+//     console.log("authors")
+//     console.log(authorOptions.value)
+//   }
+// }
+
+// getAuthors()
+
+const getBranchs = async () => {
+  const table = await getEzyBranchList()
+  if (table.code === 0) {
+    branchOptions.value = table.data.list
+    console.log("branchs")
+    console.log(branchOptions.value)
+  }
+}
+getBranchs()
+
+const getStages = async () => {
+  const table = await getEzyStageList()
+  if (table.code === 0) {
+    stageOptions.value = table.data.list
+    console.log("stages")
+    console.log(stageOptions.value)
+  }
+}
+
+getStages()
 
 const deleteRow = (index) => {
   tableData.value.splice(index, 1)
