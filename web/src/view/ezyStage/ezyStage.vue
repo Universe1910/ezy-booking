@@ -72,11 +72,17 @@
         <el-form-item label="Map URL:" prop="mapURL">
           <el-input v-model="formData.mapURL" :clearable="true" placeholder="Please enter map URL" />
         </el-form-item>
+        <el-form-item label="Branch:" prop="branchID">
+          <!-- <el-input v-model="formData.branchID" :clearable="true" placeholder="Please enter map URL" /> -->
+          <el-select v-model="formData.branchID" clearable placeholder="Select">
+            <el-option v-for="item in branchs" :key="item.ID" :label="item.name" :value="item.ID" />
+          </el-select>
+        </el-form-item>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
           <el-button size="small" @click="closeDialog">Cancel</el-button>
-          <el-button size="small" type="primary" @click="enterDialog">Create</el-button>
+          <el-button size="small" type="primary" @click="enterDialog">Save</el-button>
         </div>
       </template>
     </el-dialog>
@@ -99,6 +105,10 @@ import {
   getEzyStageList
 } from '@/api/ezyStage'
 
+import {
+  getEzyBranchList
+} from '@/api/ezyBranch'
+
 // 全量引入格式化工具 请按需保留
 import { getDictFunc, formatDate, formatBoolean, filterDict } from '@/utils/format'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -109,6 +119,7 @@ const formData = ref({
   name: '',
   address: '',
   mapURL: '',
+  branchID: ''
 })
 
 // 验证规则
@@ -134,7 +145,7 @@ const total = ref(0)
 const pageSize = ref(10)
 const tableData = ref([])
 const searchInfo = ref({})
-
+const selectBranch = ref()
 // 重置
 const onReset = () => {
   searchInfo.value = {}
@@ -164,6 +175,7 @@ const getTableData = async () => {
   const table = await getEzyStageList({ page: page.value, pageSize: pageSize.value, ...searchInfo.value })
   if (table.code === 0) {
     tableData.value = table.data.list
+    console.log(tableData.value)
     total.value = table.data.total
     page.value = table.data.page
     pageSize.value = table.data.pageSize
@@ -171,6 +183,19 @@ const getTableData = async () => {
 }
 
 getTableData()
+
+
+const branchs = ref([])
+
+const getBranchs = async () => {
+  const table = await getEzyBranchList()
+  if (table.code === 0) {
+    branchs.value = table.data.list
+    // console.log(branchs.value)
+  }
+}
+
+getBranchs()
 
 // ============== 表格控制部分结束 ===============
 
@@ -277,6 +302,7 @@ const closeDialog = () => {
     name: '',
     address: '',
     mapURL: '',
+    branchID: '',
   }
 }
 // 弹窗确定
@@ -284,8 +310,11 @@ const enterDialog = async () => {
   elFormRef.value?.validate(async (valid) => {
     if (!valid) return
     let res
+    debugger;
+    // formData.value.branchID = selectBranch.value
     switch (type.value) {
       case 'create':
+        
         res = await createEzyStage(formData.value)
         break
       case 'update':

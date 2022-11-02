@@ -304,6 +304,7 @@ const getTableData = async () => {
     total.value = table.data.total
     page.value = table.data.page
     pageSize.value = table.data.pageSize
+    console.log(tableData.value);
   }
 }
 
@@ -328,9 +329,9 @@ const handleSelectionChange = (val) => {
 
 // Delete 行
 const deleteRow = (row) => {
-  ElMessageBox.confirm('确定要Delete 吗?', '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
+  ElMessageBox.confirm('Are you sure want to delete it?', 'hint', {
+    confirmButtonText: 'Delete',
+    cancelButtonText: 'Cancel',
     type: 'warning'
   }).then(() => {
     deleteEzyAppointmentFunc(row)
@@ -347,7 +348,7 @@ const onDelete = async () => {
   if (multipleSelection.value.length === 0) {
     ElMessage({
       type: 'warning',
-      message: '请选择要Delete 的数据'
+      message: 'Select bulk to delete'
     })
     return
   }
@@ -383,11 +384,6 @@ const updateEzyAppointmentFunc = async (row) => {
 }
 
 const pushToAppointmentEdit = (row) => {
-  // route.push("ezyAppointmentEdit",
-  // {
-
-  // })
-
   router.push({
     name: 'ezyAppointmentEdit',
     params: {

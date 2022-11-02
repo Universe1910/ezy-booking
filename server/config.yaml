@@ -113,7 +113,7 @@ pgsql:
   path: localhost
   port: "5432"
   config: sslmode=disable TimeZone=Asia/Shanghai
-  db-name: udoopushingcentral
+  db-name: ezy-booking
   username: tinhphan
   password: "123456"
   max-idle-conns: 10
