@@ -111,42 +111,42 @@ const formData = ref({
 const rule = reactive({
                appointmentName : [{
                    required: true,
-                   message: 'Appointment name can't be empty',
+                   message: 'Appointment name can\'t be empty',
                    trigger: ['input','blur'],
                }],
                singer : [{
                    required: true,
-                   message: 'Singer can't be empty',
+                   message: 'Singer can\'t be empty',
                    trigger: ['input','blur'],
                }],
                appointmentDate : [{
                    required: true,
-                   message: 'Appointment date can't be empty',
+                   message: 'Appointment date can\'t be empty',
                    trigger: ['input','blur'],
                }],
                startAt : [{
                    required: true,
-                   message: 'Start at can't be empty',
+                   message: 'Start at can\'t be empty',
                    trigger: ['input','blur'],
                }],
                endAt : [{
                    required: true,
-                   message: 'End at can't be empty',
+                   message: 'End at can\'t be empty',
                    trigger: ['input','blur'],
                }],
                stage : [{
                    required: true,
-                   message: 'Stage can't be empty',
+                   message: 'Stage can\'t be empty',
                    trigger: ['input','blur'],
                }],
                stageMap : [{
                    required: true,
-                   message: 'Stage map can't be empty',
+                   message: 'Stage map can\'t be empty',
                    trigger: ['input','blur'],
                }],
                stageArea : [{
                    required: true,
-                   message: 'Stage Area can't be empty',
+                   message: 'Stage Area can\'t be empty',
                    trigger: ['input','blur'],
                }],
                branch : [{

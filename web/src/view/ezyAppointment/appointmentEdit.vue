@@ -1,9 +1,8 @@
 
 <template>
-  <el-form :model="formData" ref="vForm" :rules="rules" label-position="left" label-width="150px" size="medium"
-    @submit.prevent>
+  <el-form :model="formData" ref="vForm" :rules="rule" label-position="left" label-width="150px" size="medium">
     <div class="static-content-item">
-      <div>Add new Appointment</div>
+      <h3>Add new Appointment</h3>
     </div>
     <div class="static-content-item">
       <el-divider direction="horizontal"></el-divider>
@@ -13,7 +12,7 @@
         placeholder="Please enter the appointment name" clearable></el-input>
     </el-form-item>
     <el-form-item label="Slug" label-width="80px" prop="slug">
-      <el-input v-model="formData.slug" type="text" clearable><template #append>
+      <el-input v-model="formData.slug" type="text" clearable :disabled="true"><template #append>
           <el-button class="el-icon-edit"></el-button>
         </template></el-input>
     </el-form-item>
@@ -21,13 +20,13 @@
       <el-divider direction="horizontal"></el-divider>
     </div>
     <div class="static-content-item">
-      <div>General</div>
+      <h3>General</h3>
     </div>
     <el-row>
       <el-col :span="18" class="grid-cell left-panel">
         <el-row>
           <el-col :span="12" class="grid-cell">
-            <el-form-item label="Singer" label-width="80px" prop="singer" class="required">
+            <el-form-item label="Singer" label-width="80px" prop="singer" class="required singer-input">
               <el-input v-model="formData.singer" type="text" clearable></el-input>
             </el-form-item>
           </el-col>
@@ -55,20 +54,24 @@
         <div class="static-content-item">
           <el-divider direction="horizontal"></el-divider>
         </div>
-        <el-form-item label="Note" label-width="80px" prop="appointmentNote">
-          <el-input type="textarea" v-model="formData.appointmentNote" rows="3"></el-input>
-        </el-form-item>
         <el-form-item label="Content" label-width="80px" prop="appointmentContent">
-          <vue-editor v-model="formData.appointmentContent"></vue-editor>
+          <vue-editor class="appointment-content-editor" v-model="formData.appointmentContent"></vue-editor>
         </el-form-item>
+        <el-form-item label="Note" label-width="80px" prop="appointmentNote">
+          <el-input type="textarea" v-model="formData.appointmentNote" rows="5"></el-input>
+        </el-form-item>
+
         <div class="static-content-item">
-          <el-divider direction="horizontal"></el-divider>
+          <el-divider direction="horizontal">
+          </el-divider>
         </div>
         <div class="static-content-item">
-          <div>Stage</div>
+          <h3>Stage</h3>
         </div>
-        <el-form-item label="Stage" label-width="80px" prop="stage">
-          <el-select v-model="formData.stage" class="full-width-input" clearable placeholder="Pick a stage">
+        <div class="static-content-item">
+        </div>
+        <el-form-item label="Stage" label-width="80px" prop="stageId">
+          <el-select v-model="formData.stageId" class="full-width-input" clearable placeholder="Pick a stage">
             <el-option v-for="item in stageOptions" :key="item.ID" :label="item.name" :value="item.ID"
               :disabled="item.disabled"></el-option>
           </el-select>
@@ -78,14 +81,11 @@
             <el-table :data="tableData" style="width: 100%">
               <el-table-column label="Column">
                 <template #default="scope">
-                  <!-- <el-input v-model="scope.row.col" :disabled="!scope.row.edited"></el-input> -->
                   <el-input type="text" v-model="scope.row.label"></el-input>
                 </template>
               </el-table-column>
-
               <el-table-column label="Row">
                 <template #default="scope">
-                  <!-- <el-input v-model="scope.row.row" :disabled="!scope.row.edited"></el-input> -->
                   <el-input type="number" @blur="changeNumberInStageMap" v-model="scope.row.number"></el-input>
                 </template>
               </el-table-column>
@@ -103,10 +103,8 @@
         <div class="static-content-item">
           <div>Stage Area</div>
         </div>
-        <div class="static-content-item" v-show="false">
-          <div>Disable Index</div>
-        </div>
-        <el-form-item label="" label-width="0" prop="disableIndex">
+
+        <el-form-item label="Disable" label-width="80px" prop="disableIndex">
           <el-select v-model="formData.disableIndex" class="full-width-input" clearable filterable allow-create
             default-first-option multiple>
             <el-option v-for="(item, index) in disableIndexOptions" :key="index" :label="item.label" :value="item.value"
@@ -126,6 +124,12 @@
         <el-form-item label="Allow Bus" label-width="80px" prop="allowBus">
           <el-switch v-model="formData.allowBus"></el-switch>
         </el-form-item>
+        <el-form-item label="Branch" label-width="80px" prop="branchId">
+          <el-select v-model="formData.branchId" class="full-width-input" clearable placeholder="Pick a branch">
+            <el-option v-for="item in branchOptions" :key="item.ID" :label="item.name" :value="item.ID"
+              :disabled="item.disabled"></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="Status" label-width="80px" prop="status" class="required">
           <el-select v-model="formData.status" class="full-width-input" clearable>
             <el-option v-for="(item, index) in statusOptions" :key="index" :label="item.label" :value="item.value"
@@ -135,10 +139,10 @@
         <el-form-item label="Author" label-width="80px" prop="createdBy" class="required">
           <el-select v-model="formData.createdBy" class="full-width-input" clearable filterable automatic-dropdown
             remote>
-            <el-option v-for="(item, index) in authorOptions" :key="index" :label="item.label" :value="item.value"
+            <el-option v-for="item in authorOptions" :key="item.ID" :label="item.nickName" :value="item.ID"
               :disabled="item.disabled"></el-option>
           </el-select>
-          <el-form-item>
+          <el-form-item class="update-button">
             <el-button @click="updateAppointment" type="primary">Update</el-button>
           </el-form-item>
 
@@ -158,12 +162,7 @@
         <div class="static-content-item">
           <el-divider direction="horizontal"></el-divider>
         </div>
-        <el-form-item label="Branch" label-width="80px" prop="branch">
-          <el-radio-group v-model="formData.branch">
-            <el-radio v-for="item in branchOptions" :key="item.ID" :label="item.name" :disabled="item.disabled"
-              style="{display: inline}">{{ item.name }}</el-radio>
-          </el-radio-group>
-        </el-form-item>
+
       </el-col>
     </el-row>
   </el-form>
@@ -182,6 +181,9 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { ref, reactive } from 'vue'
 import { useRoute } from 'vue-router'
 
+import { VueEditor } from "vue3-editor";
+
+
 import {
   updateEzyAppointment,
   findEzyAppointment,
@@ -199,8 +201,10 @@ import {
   getUserList,
 } from '@/api/user'
 
+
 const route = useRoute()
 
+const vForm = ref()
 const formData = ref({
   appointmentName: "",
   slug: "",
@@ -210,7 +214,8 @@ const formData = ref({
   endAt: null,
   appointmentNote: "",
   appointmentContent: null,
-  stage: "",
+  stageId: "",
+  branchId: "",
   stageMap: "",
   stageArea: "",
   disableIndex: [],
@@ -218,10 +223,9 @@ const formData = ref({
   hideStageIndex: false,
   allowBus: false,
   status: "publish",
-  createdBy: "",
+  createdBy: 1,
   featuredImage: null,
   branch: 3,
-
 },
 )
 
@@ -233,10 +237,14 @@ const rule = reactive(
       required: true,
       message: 'Input value should be not null.',
     }],
-    slug: [{
-      pattern: /^([hH][tT]{2}[pP]:\/\/|[hH][tT]{2}[pP][sS]:\/\/)(([A-Za-z0-9-~]+)\.)+([A-Za-z0-9-~\/])+$/,
-      trigger: ['blur', 'change'],
-      message: ''
+    // slug: [{
+    //   pattern: /^([hH][tT]{2}[pP]:\/\/|[hH][tT]{2}[pP][sS]:\/\/)(([A-Za-z0-9-~]+)\.)+([A-Za-z0-9-~\/])+$/,
+    //   trigger: ['blur', 'change'],
+    //   message: ''
+    // }],
+    stageId: [{
+      required: true,
+      message: 'Input value should be not null.',
     }],
     singer: [{
       required: true,
@@ -319,30 +327,37 @@ const searchInfo = ref({ appointmentId: Number(route.params.id) })
 const getEzyAppointmentById = async () => {
   let appointmentId = searchInfo.value.appointmentId;
   var res = await findEzyAppointment({ ID: appointmentId });
-  console.log(res);
+
   formData.value = res.data.reezyAppointment;
+  debugger;
+  if (formData.value.stageMap) {
+    var stageMapObject = JSON.parse(formData.value.stageMap)
+    tableData.value = stageMapObject
+  }
+  console.log(formData.value);
 }
+
 
 getEzyAppointmentById();
 
 
-// const getAuthors = async () => {
-//   const table = await getUserList()
-//   if (table.code === 0) {
-//     authorOptions.value = table.data.list
-//     console.log("authors")
-//     console.log(authorOptions.value)
-//   }
-// }
+const getAuthors = async () => {
+  const table = await getUserList({ page: 1, pageSize: 100 })
+  if (table.code === 0) {
+    authorOptions.value = table.data.list
+    // console.log("authors")
+    console.log(authorOptions.value)
+  }
+}
 
-// getAuthors()
+getAuthors()
 
 const getBranchs = async () => {
   const table = await getEzyBranchList()
   if (table.code === 0) {
     branchOptions.value = table.data.list
-    console.log("branchs")
-    console.log(branchOptions.value)
+    // console.log("branchs")
+    // console.log(branchOptions.value)
   }
 }
 getBranchs()
@@ -351,12 +366,44 @@ const getStages = async () => {
   const table = await getEzyStageList()
   if (table.code === 0) {
     stageOptions.value = table.data.list
-    console.log("stages")
-    console.log(stageOptions.value)
   }
 }
 
 getStages()
+
+const updateAppointment = async () => {
+  vForm.value?.validate(async (valid) => {
+    console.log("update appointment")
+    if (!valid) return
+    debugger;
+    var slug = toSlug(formData.value.appointmentName)
+    formData.value.slug = slug;
+    var stageMapObject = getStageMap()
+    formData.value.stageMap = JSON.stringify(stageMapObject)
+    var res = await updateEzyAppointment(formData.value)
+    if (res.code === 0) {
+      ElMessage({
+        type: 'success',
+        message: 'Update successfullys'
+      })
+      // closeDialog()
+      // getTableData()
+    }
+  })
+}
+
+const getStageMap = () => {
+  debugger;
+  var stageMapObject = []
+  for (var i = 0; i < tableData.value.length; i++) {
+    var row = tableData.value[i];
+    stageMapObject.push({
+      label: row['label'],
+      number: row['number'],
+    })
+  }
+  return stageMapObject
+}
 
 const deleteRow = (index) => {
   tableData.value.splice(index, 1)
@@ -365,16 +412,14 @@ const deleteRow = (index) => {
 
 const onAddItem = () => {
   tableData.value.push({
-    stage_map_col: '',
-    stage_map_row: 0,
+    lable: '',
+    row: 0,
   })
-  // console.log(tableData.value);
   calcTotalSeat();
 }
 
 const changeNumberInStageMap = () => {
   var total = 0;
-  debugger;
   for (var i = 0; i < tableData.value.length; i++) {
     var row = tableData.value[i];
     var number = row['number'];
@@ -382,10 +427,6 @@ const changeNumberInStageMap = () => {
       total += number * 1;
     }
   }
-  //  tableData.value.forEach((e) =>{
-  //       total += e.number * 1;
-  // });
-  console.log("total: " + total);
   formData.value.totalSeat = total
 
 }
@@ -394,30 +435,54 @@ const handleEdit = (index, row) => {
   console.log(index, row)
 }
 
-//  const instance = getCurrentInstance()
 
-const submitForm = () => {
-  // instance.ctx.$refs['vForm'].validate(valid => {
-  //   if (!valid) return
-  //   //TODO: 提交表单
-  // })
+const toSlug = (str) => {
+  // Chuyển hết sang chữ thường
+  str = str.toLowerCase();
 
-  const resetForm = () => {
-    // instance.ctx.$refs['vForm'].resetFields()
-  }
+  // xóa dấu
+  str = str
+    .normalize('NFD') // chuyển chuỗi sang unicode tổ hợp
+    .replace(/[\u0300-\u036f]/g, ''); // xóa các ký tự dấu sau khi tách tổ hợp
 
+  // Thay ký tự đĐ
+  str = str.replace(/[đĐ]/g, 'd');
 
+  // Xóa ký tự đặc biệt
+  str = str.replace(/([^0-9a-z-\s])/g, '');
+
+  // Xóa khoảng trắng thay bằng ký tự -
+  str = str.replace(/(\s+)/g, '-');
+
+  // Xóa ký tự - liên tiếp
+  str = str.replace(/-+/g, '-');
+
+  // xóa phần dư - ở đầu & cuối
+  str = str.replace(/^-+|-+$/g, '');
+
+  // return
+  return str;
 }
-
 </script>
 
+
 <style lang="scss">
+
+</style>
+
+<style lang="scss" scoped>
 .el-input-number.full-width-input,
 .el-cascader.full-width-input {
   width: 100% !important;
 }
 
+.el-select {
+  width: 100% !important;
+}
+
 .el-form-item--medium {
+  width: 100%;
+
   .el-radio {
     line-height: 36px !important;
   }
@@ -460,9 +525,7 @@ const submitForm = () => {
 .float-right {
   float: right;
 }
-</style>
 
-<style lang="scss" scoped>
 div.table-container {
   table.table-layout {
     width: 100%;
@@ -496,12 +559,18 @@ div.tab-container {}
 
 .static-content-item {
   min-height: 20px;
+  // margin-top: 12px;
   display: flex;
   align-items: center;
 
   :deep(.el-divider--horizontal) {
-    margin: 0;
+    margin: 4;
   }
+}
+
+.appointment-content-editor {
+  background-color: #fff;
+  border-radius: 8px;
 }
 
 .left-panel {
@@ -511,6 +580,13 @@ div.tab-container {}
 
 .right-panel {
   padding-left: 6px;
+}
 
+.update-button {
+  margin-top: 16px;
+}
+
+.singer-input {
+  width: 80%;
 }
 </style>

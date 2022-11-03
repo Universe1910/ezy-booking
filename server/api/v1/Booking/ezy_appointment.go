@@ -128,10 +128,10 @@ func (ezyAppointmentApi *EzyAppointmentApi) UpdateEzyAppointment(c *gin.Context)
 		"StartAt":         {utils.NotEmpty()},
 		"EndAt":           {utils.NotEmpty()},
 		"Stage":           {utils.NotEmpty()},
-		"StageMap":        {utils.NotEmpty()},
-		"StageArea":       {utils.NotEmpty()},
-		"Branch":          {utils.NotEmpty()},
-		"Status":          {utils.NotEmpty()},
+		// "StageMap":        {utils.NotEmpty()},
+		// "StageArea":       {utils.NotEmpty()},
+		"Branch": {utils.NotEmpty()},
+		"Status": {utils.NotEmpty()},
 	}
 	if err := utils.Verify(ezyAppointment, verify); err != nil {
 		response.FailWithMessage(err.Error(), c)

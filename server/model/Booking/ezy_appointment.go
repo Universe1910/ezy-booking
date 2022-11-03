@@ -26,7 +26,7 @@ type EzyAppointment struct {
 	HideStageIndex     *bool      `json:"hideStageIndex" form:"hideStageIndex" gorm:"column:hide_stage_index;comment:;"`
 	AllowBus           *bool      `json:"allowBus" form:"allowBus" gorm:"column:allow_bus;comment:;"`
 	CreatedBy          *int       `json:"createdBy" form:"createdBy" gorm:"column:created_by;comment:;"`
-	BranchID           *int       `json:"branch_id" form:"branch" gorm:"column:branch_id;comment:;"`
+	BranchID           *int       `json:"branchId" form:"branchId" gorm:"column:branch_id;comment:;"`
 	FeaturedImage      string     `json:"featuredImage" form:"featuredImage" gorm:"column:featured_image;comment:;"`
 	Status             string     `json:"status" form:"status" gorm:"column:status;comment:;"`
 	Slug               string     `json:"slug" form:"slug" gorm:"column:slug";comment:;"`
