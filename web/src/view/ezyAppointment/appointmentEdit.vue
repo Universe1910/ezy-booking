@@ -78,7 +78,8 @@
         </el-form-item>
         <div class="static-content-item">
           <div style="width:100%">
-            <el-table :data="tableData" style="width: 100%">
+            <div>Stage Map</div>
+            <el-table :data="stageMapData" style="width: 100%">
               <el-table-column label="Column">
                 <template #default="scope">
                   <el-input type="text" v-model="scope.row.label"></el-input>
@@ -91,17 +92,55 @@
               </el-table-column>
               <el-table-column fixed="right" label="Action" width="120">
                 <template #default="scope">
-                  <el-button link type="primary" size="small" @click.prevent="deleteRow(scope.$index)">
+                  <el-button link type="primary" size="small" @click.prevent="deleteRowStageMap(scope.$index)">
                     Remove
                   </el-button>
                 </template>
               </el-table-column>
             </el-table>
-            <el-button class="mt-4" style="width: 100%" @click="onAddItem">Add Row</el-button>
+            <el-button class="mt-4" style="width: 100%" @click="onStageMapAddItem">Add Row</el-button>
           </div>
         </div>
         <div class="static-content-item">
-          <div>Stage Area</div>
+          <div style="width:100%">
+            <div>Stage Area</div>
+            <el-table :data="stageAreaData" style="width: 100%">
+              <el-table-column label="Area">
+                <template #default="scope">
+                  <el-input type="text" v-model="scope.row.area" class="required"></el-input>
+                </template>
+              </el-table-column>
+              <el-table-column label="Seats">
+                <template #default="scope">
+                  <!-- <el-input type="number" v-model="scope.row.seats" class="required"></el-input> -->
+                  <el-select v-model="scope.row.seats" class=" full-width-input" clearable filterable allow-create
+                    default-first-option multiple>
+                    <el-option v-for="(item, index) in scope.row.seats" :key="index" :label="item.label"
+                      :value="item.value" :disabled="item.disabled"></el-option>
+                  </el-select>
+
+                </template>
+              </el-table-column>
+              <el-table-column label="Price">
+                <template #default="scope">
+                  <el-input type="number" v-model="scope.row.price" class="required"></el-input>
+                </template>
+              </el-table-column>
+              <el-table-column label="Description">
+                <template #default="scope">
+                  <el-input type="text" v-model="scope.row.description"></el-input>
+                </template>
+              </el-table-column>
+              <el-table-column fixed="right" label="Action" width="120">
+                <template #default="scope">
+                  <el-button link type="primary" size="small" @click.prevent="deleteRowStageArea(scope.$index)">
+                    Remove
+                  </el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+            <el-button class="mt-4" style="width: 100%" @click="onStageAreaAddItem()">Add Row</el-button>
+          </div>
         </div>
 
         <el-form-item label="Disable" label-width="80px" prop="disableIndex">
@@ -137,8 +176,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="Author" label-width="80px" prop="createdBy" class="required">
-          <el-select v-model="formData.createdBy" class="full-width-input" clearable filterable automatic-dropdown
-            remote>
+          <el-select v-model="formData.createdBy" class="full-width-input" clearable>
             <el-option v-for="item in authorOptions" :key="item.ID" :label="item.nickName" :value="item.ID"
               :disabled="item.disabled"></el-option>
           </el-select>
@@ -317,9 +355,12 @@ const featured_imageUploadData = ref({});
 const disableIndexOptions = ref([]);
 
 const stageMapOptions = ref([]);
+const stageAreaOptions = ref([]);
 
 
-const tableData = ref([])
+
+const stageMapData = ref([])
+const stageAreaData = ref([])
 
 const searchInfo = ref({ appointmentId: Number(route.params.id) })
 
@@ -329,10 +370,10 @@ const getEzyAppointmentById = async () => {
   var res = await findEzyAppointment({ ID: appointmentId });
 
   formData.value = res.data.reezyAppointment;
-  debugger;
   if (formData.value.stageMap) {
     var stageMapObject = JSON.parse(formData.value.stageMap)
-    tableData.value = stageMapObject
+    stageMapData.value = stageMapObject
+    generateStageArea()
   }
   console.log(formData.value);
 }
@@ -375,7 +416,6 @@ const updateAppointment = async () => {
   vForm.value?.validate(async (valid) => {
     console.log("update appointment")
     if (!valid) return
-    debugger;
     var slug = toSlug(formData.value.appointmentName)
     formData.value.slug = slug;
     var stageMapObject = getStageMap()
@@ -393,10 +433,9 @@ const updateAppointment = async () => {
 }
 
 const getStageMap = () => {
-  debugger;
   var stageMapObject = []
-  for (var i = 0; i < tableData.value.length; i++) {
-    var row = tableData.value[i];
+  for (var i = 0; i < stageMapData.value.length; i++) {
+    var row = stageMapData.value[i];
     stageMapObject.push({
       label: row['label'],
       number: row['number'],
@@ -405,29 +444,60 @@ const getStageMap = () => {
   return stageMapObject
 }
 
-const deleteRow = (index) => {
-  tableData.value.splice(index, 1)
+
+const generateStageArea = () => {
+  var options = []
+  for (var i = 0; i < stageMapData.value.length; i++) {
+    var row = stageMapData.value[i];
+    var label = row['lable'];
+    var number = row['number'];
+    for (var j = 0; j < number; j++) {
+      var seatIndex = `${label}${j}`
+      options.push(seatIndex)
+    }
+  }
+  stageAreaData.value = options
+
+}
+
+const deleteRowStageMap = (index) => {
+  stageMapData.value.splice(index, 1)
   changeNumberInStageMap();
 }
 
-const onAddItem = () => {
-  tableData.value.push({
+
+const deleteRowStageArea = (index) => {
+  stageAreaData.value.splice(index, 1)
+}
+
+const onStageMapAddItem = () => {
+  stageMapData.value.push({
     lable: '',
     row: 0,
   })
   calcTotalSeat();
 }
 
+const onStageAreaAddItem = () => {
+  stageAreaData.value.push({
+    area: '',
+    seats: [],
+    price: 0,
+    description: ''
+  })
+}
+
 const changeNumberInStageMap = () => {
   var total = 0;
-  for (var i = 0; i < tableData.value.length; i++) {
-    var row = tableData.value[i];
+  for (var i = 0; i < stageMapData.value.length; i++) {
+    var row = stageMapData.value[i];
     var number = row['number'];
     if (number) {
       total += number * 1;
     }
   }
   formData.value.totalSeat = total
+  generateStageArea()
 
 }
 
