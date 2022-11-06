@@ -79,6 +79,9 @@
         <div class="static-content-item">
           <div style="width:100%">
             <div>Stage Map</div>
+            <div class="static-content-item">
+              <!-- <el-divider direction="horizontal"></el-divider> -->
+            </div>
             <el-table :data="stageMapData" style="width: 100%">
               <el-table-column label="Column">
                 <template #default="scope">
@@ -98,12 +101,18 @@
                 </template>
               </el-table-column>
             </el-table>
-            <el-button class="mt-4" style="width: 100%" @click="onStageMapAddItem">Add Row</el-button>
+            <el-button class="mt-4" style="width: 100%" @click="onStageMapAddItem()">Add Row</el-button>
           </div>
+        </div>
+        <div class="static-content-item">
+          <!-- <el-divider direction="horizontal"></el-divider> -->
         </div>
         <div class="static-content-item">
           <div style="width:100%">
             <div>Stage Area</div>
+            <div class="static-content-item">
+              <!-- <el-divider direction="horizontal"></el-divider> -->
+            </div>
             <el-table :data="stageAreaData" style="width: 100%">
               <el-table-column label="Area">
                 <template #default="scope">
@@ -112,13 +121,10 @@
               </el-table-column>
               <el-table-column label="Seats">
                 <template #default="scope">
-                  <!-- <el-input type="number" v-model="scope.row.seats" class="required"></el-input> -->
-                  <el-select v-model="scope.row.seats" class=" full-width-input" clearable filterable allow-create
-                    default-first-option multiple>
-                    <el-option v-for="(item, index) in scope.row.seats" :key="index" :label="item.label"
+                  <el-select v-model="scope.row.seats" class=" full-width-input" clearable filterable multiple>
+                    <el-option v-for="item in stageAreaOptions" :key="item.value" :label="item.label"
                       :value="item.value" :disabled="item.disabled"></el-option>
                   </el-select>
-
                 </template>
               </el-table-column>
               <el-table-column label="Price">
@@ -139,14 +145,15 @@
                 </template>
               </el-table-column>
             </el-table>
-            <el-button class="mt-4" style="width: 100%" @click="onStageAreaAddItem()">Add Row</el-button>
+            <el-button class="mt-4" style="width: 100%" @click="onStageAreaAddItem()">Add Area</el-button>
           </div>
         </div>
-
+        <div class="static-content-item">
+          <el-divider direction="horizontal"></el-divider>
+        </div>
         <el-form-item label="Disable" label-width="80px" prop="disableIndex">
-          <el-select v-model="formData.disableIndex" class="full-width-input" clearable filterable allow-create
-            default-first-option multiple>
-            <el-option v-for="(item, index) in disableIndexOptions" :key="index" :label="item.label" :value="item.value"
+          <el-select v-model="formData.disableIndex" class="full-width-input" clearable filterable multiple>
+            <el-option v-for="item in stageAreaOptions" :key="item.value" :label="item.label" :value="item.value"
               :disabled="item.disabled"></el-option>
           </el-select>
         </el-form-item>
@@ -352,15 +359,20 @@ const featured_imageUploadHeaders = ref({});
 
 const featured_imageUploadData = ref({});
 
-const disableIndexOptions = ref([]);
-
 const stageMapOptions = ref([]);
 const stageAreaOptions = ref([]);
 
 
 
 const stageMapData = ref([])
-const stageAreaData = ref([])
+const stageAreaData = ref([
+  {
+    area: '',
+    seats: [],
+    price: 0,
+    description: ''
+  }
+])
 
 const searchInfo = ref({ appointmentId: Number(route.params.id) })
 
@@ -375,7 +387,13 @@ const getEzyAppointmentById = async () => {
     stageMapData.value = stageMapObject
     generateStageArea()
   }
-  console.log(formData.value);
+  if (formData.value.stageArea) {
+    var areaObject = JSON.parse(formData.value.stageArea)
+    stageAreaData.value = areaObject
+  }
+  if(formData.value.disableIndex){
+    formData.value.disableIndex  = JSON.parse(formData.value.disableIndex)
+  }
 }
 
 
@@ -386,8 +404,6 @@ const getAuthors = async () => {
   const table = await getUserList({ page: 1, pageSize: 100 })
   if (table.code === 0) {
     authorOptions.value = table.data.list
-    // console.log("authors")
-    console.log(authorOptions.value)
   }
 }
 
@@ -397,8 +413,6 @@ const getBranchs = async () => {
   const table = await getEzyBranchList()
   if (table.code === 0) {
     branchOptions.value = table.data.list
-    // console.log("branchs")
-    // console.log(branchOptions.value)
   }
 }
 getBranchs()
@@ -412,14 +426,21 @@ const getStages = async () => {
 
 getStages()
 
+
+
 const updateAppointment = async () => {
   vForm.value?.validate(async (valid) => {
     console.log("update appointment")
     if (!valid) return
+    //Slug
     var slug = toSlug(formData.value.appointmentName)
     formData.value.slug = slug;
-    var stageMapObject = getStageMap()
-    formData.value.stageMap = JSON.stringify(stageMapObject)
+    //Map Object
+    formData.value.stageMap = JSON.stringify(getStageMap())
+    //Stage Object
+    formData.value.stageArea = JSON.stringify(getStageArea())
+    //disable index
+    formData.value.disableIndex = JSON.stringify(formData.value.disableIndex)
     var res = await updateEzyAppointment(formData.value)
     if (res.code === 0) {
       ElMessage({
@@ -444,19 +465,35 @@ const getStageMap = () => {
   return stageMapObject
 }
 
+const getStageArea = () => {
+
+  var areas = [];
+  for (var i = 0; i < stageAreaData.value.length; i++) {
+    var row = stageAreaData.value[i];
+    areas.push({
+      area: row['area'],
+      seats: row['seats'],
+      price: row['price'],
+      description: row['description'],
+    })
+  }
+
+  return areas;
+
+}
 
 const generateStageArea = () => {
   var options = []
   for (var i = 0; i < stageMapData.value.length; i++) {
     var row = stageMapData.value[i];
-    var label = row['lable'];
+    var label = row['label'];
     var number = row['number'];
-    for (var j = 0; j < number; j++) {
+    for (var j = 1; j <= number; j++) {
       var seatIndex = `${label}${j}`
-      options.push(seatIndex)
+      options.push({ label: seatIndex, value: seatIndex })
     }
   }
-  stageAreaData.value = options
+  stageAreaOptions.value = options
 
 }
 
@@ -479,6 +516,7 @@ const onStageMapAddItem = () => {
 }
 
 const onStageAreaAddItem = () => {
+  debugger;
   stageAreaData.value.push({
     area: '',
     seats: [],
