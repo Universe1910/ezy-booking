@@ -58,8 +58,11 @@
         </el-table-column> -->
         <el-table-column align="left" label="Action" width="150px">
           <template #default="scope">
+            
             <el-button type="primary" link icon="edit" size="small" class="table-button"
               @click="pushToAppointmentEdit(scope.row)">Edit</el-button>
+              <el-button type="primary" link icon="edit" size="small" class="table-button"
+              @click="pushToAppointmentDetail(scope.row)">Detail</el-button>
             <el-button type="primary" link icon="delete" size="small" @click="deleteRow(scope.row)">Delete </el-button>
           </template>
         </el-table-column>
@@ -279,6 +282,14 @@ const pushToAppointmentEdit = (row) => {
   })
 }
 
+const pushToAppointmentDetail = (row) => {
+  router.push({
+    name: 'ezyAppointmentDetail',
+    params: {
+      id: row.ID
+    }
+  })
+}
 
 
 

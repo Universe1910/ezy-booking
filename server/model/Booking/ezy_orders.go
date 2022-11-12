@@ -28,7 +28,12 @@ type EzyOrders struct {
 	Notes          string     `json:"notes" form:"notes" gorm:"column:notes;comment:;"`
 	Status         string     `json:"status" form:"status" gorm:"column:status;comment:;"`
 	CustomerID     *int       `json:"customer_id" form:"customer_id" gorm:"column:customer_id;comment:;"`
-	ShowID         *int       `json:"show_id" form:"show_id" gorm:"column:show_id;comment:;"`
+	AppointmentID  *int       `json:"appointmentId" form:"appointmentId" gorm:"column:appointment_id;comment:;"`
+
+	CustomerObject    EzyCustomer    `json:"customerObject" form:"customerObject" gorm:"foreignKey:CustomerID"`
+	AppointmentObject EzyAppointment `json:"appointmentObject" form:"appointmentObject" gorm:"foreignKey:AppointmentID"`
+	// CouponObject EzyCoupon `json:"couponObject" form:"couponObject" gorm:"foreignKey:CouponID"`
+
 }
 
 // TableName EzyOrders 表名
