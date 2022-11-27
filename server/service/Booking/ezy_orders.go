@@ -41,7 +41,7 @@ func (ezyOrdersService *EzyOrdersService) UpdateEzyOrders(ezyOrders Booking.EzyO
 // GetEzyOrders 根据id获取EzyOrders记录
 // Author [piexlmax](https://github.com/piexlmax)
 func (ezyOrdersService *EzyOrdersService) GetEzyOrders(id uint) (ezyOrders Booking.EzyOrders, err error) {
-	err = global.GVA_DB.Where("id = ?", id).Preload("CustomerObject").First(&ezyOrders).Error
+	err = global.GVA_DB.Where("id = ?", id).Preload("CustomerObject").Preload("LastActionByObject").Preload("CreatedByObject").First(&ezyOrders).Error
 	return
 }
 
@@ -82,6 +82,6 @@ func (ezyOrdersService *EzyOrdersService) GetEzyOrdersInfoListByAppointment(info
 	if err != nil {
 		return
 	}
-	err = db.Limit(limit).Offset(offset).Preload("CustomerObject").Find(&ezyOrderss).Error
+	err = db.Limit(limit).Offset(offset).Preload("CustomerObject").Preload("LastActionByObject").Preload("CreatedByObject").Find(&ezyOrderss).Error
 	return ezyOrderss, total, err
 }

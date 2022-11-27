@@ -223,10 +223,110 @@
     <div class="tab-container">
       <el-tabs v-model="activeTab" @tab-click="handleTabClick" type="border-card">
         <el-tab-pane name="Completed" label="Completed">
+          <el-table ref="multipleTable" style="width: 100%" tooltip-effect="dark" :data="tableData" row-key="ID"
+            @selection-change="handleSelectionChange">
+            <el-table-column align="left" label="ID" prop="ID" width="60" />
+            <el-table-column align="left" label="Name" prop="customerObject.name" width="200" />
+            <el-table-column align="left" label="Phone" prop="customerObject.phone" width="150" />
+            <el-table-column align="left" label="Qty" prop="quantity" width="50" />
+            <el-table-column align="left" label="Bus" prop="busNumber" width="50" />
+            <el-table-column align="left" label="Arrived" prop="arrivedNumber" width="80" />
+            <el-table-column align="left" label="Seats" prop="seats" width="120" />
+            <el-table-column align="left" label="Total" prop="total" width="120">
+              <template #default="scope">{{ formatCurrency(scope.row.total) }}</template>
+            </el-table-column>
+            <el-table-column align="left" label="Coupon Code" prop="couponCode" width="120" />
+            <el-table-column align="left" label="Discount" prop="couponDiscount" width="120" />
+            <el-table-column align="left" label="Tax" prop="tax" width="120">
+              <template #default="scope">{{ formatCurrency(scope.row.tax) }}</template>
+            </el-table-column>
+            <el-table-column align="left" label="Payment" prop="invoicePayment" width="120">
+              <template #default="scope">{{ formatCurrency(scope.row.invoicePayment) }}</template>
+            </el-table-column>
+            <!-- <el-table-column align="left" label="Source" prop="source" width="120" /> -->
+            <el-table-column align="left" label="Notes" prop="notes" width="120" />
+            <!-- <el-table-column align="left" label="Status" prop="status" width="120" /> -->
+            <el-table-column align="left" label="Last Action" prop="lastActionByObject.nickName" width="120" />
+            <el-table-column align="left" label="Last Edit" width="180">
+              <template #default="scope">{{ formatDate(scope.row.lastActionTime) }}</template>
+            </el-table-column>
+            <el-table-column align="left" label="Created By" prop="createdByObject.nickName" width="120">
+              <template #default="scope">{{ scope.row.createdBy == null ? "Customer" :
+                  scope.row.createdByObject.nickName
+              }}</template>
+            </el-table-column>
+            <el-table-column align="left" label="Booking Time" width="180">
+              <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
+            </el-table-column>
+            <el-table-column align="left" label="Action" width="120">
+              <template #default="scope">
+                <el-button type="danger" size="small" class="table-button" @click="cancelFromCompleted(scope.row)">
+                  Cancel</el-button>
+                <el-button type="primary" size="small" class="table-button" @click="refundlFromCompleted(scope.row)">
+                  Refund</el-button>
+                <el-button type="warning" size="small" class="table-button" @click="reserveFromCompleted(scope.row)">
+                  Reserve</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+          <div class="gva-pagination">
+            <el-pagination layout="total, sizes, prev, pager, next, jumper" :current-page="page" :page-size="pageSize"
+              :page-sizes="[10, 30, 50, 100]" :total="total" @current-change="handleCurrentChange"
+              @size-change="handleSizeChange" />
+          </div>
         </el-tab-pane>
         <el-tab-pane name="Admin" label="Admin Booking">
         </el-tab-pane>
         <el-tab-pane name="Cancel" label="Cancel">
+          <el-table ref="multipleTable" style="width: 100%" tooltip-effect="dark" :data="tableData" row-key="ID"
+            @selection-change="handleSelectionChange">
+            <!-- <el-table-column type="selection" width="55" /> -->
+            <el-table-column align="left" label="ID" prop="ID" width="60" />
+            <el-table-column align="left" label="Name" prop="customerObject.name" width="200" />
+            <el-table-column align="left" label="Phone" prop="customerObject.phone" width="150" />
+            <!-- <el-table-column align="left" label="Email" prop="customerObject.email" width="180" /> -->
+            <el-table-column align="left" label="Qty" prop="quantity" width="50" />
+            <el-table-column align="left" label="Bus" prop="busNumber" width="50" />
+            <el-table-column align="left" label="Seats" prop="seats" width="120" />
+            <el-table-column align="left" label="Total" prop="total" width="120">
+              <template #default="scope">{{ formatCurrency(scope.row.total) }}</template>
+            </el-table-column>
+            <el-table-column align="left" label="Coupon Code" prop="couponCode" width="120" />
+            <el-table-column align="left" label="Discount" prop="couponDiscount" width="120" />
+            <el-table-column align="left" label="Tax" prop="tax" width="120">
+              <template #default="scope">{{ formatCurrency(scope.row.tax) }}</template>
+            </el-table-column>
+            <el-table-column align="left" label="Payment" prop="invoicePayment" width="120">
+              <template #default="scope">{{ formatCurrency(scope.row.invoicePayment) }}</template>
+            </el-table-column>
+            <el-table-column align="left" label="Notes" prop="notes" width="120" />
+            <!-- <el-table-column align="left" label="Status" prop="status" width="120" /> -->
+            <el-table-column align="left" label="Last Action" prop="lastActionByObject.nickName" width="120" />
+            <el-table-column align="left" label="Last Edit" width="180">
+              <template #default="scope">{{ formatDate(scope.row.lastActionTime) }}</template>
+            </el-table-column>
+            <el-table-column align="left" label="Created By" prop="createdByObject.nickName" width="120">
+              <template #default="scope">{{ scope.row.createdBy == null ? "Customer" :
+                  scope.row.createdByObject.nickName
+              }}</template>
+            </el-table-column>
+            <el-table-column align="left" label="Booking Time" width="180">
+              <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
+            </el-table-column>
+            <el-table-column align="left" label="Action">
+              <template #default="scope">
+                <el-button type="primary" link size="small" class="table-button"
+                  @click="confirmProcessingToCompleted(scope.row)">Confirm</el-button>
+                <!-- <el-button type="primary" link icon="delete" size="small" @click="deleteRow(scope.row)">Delete
+                </el-button> -->
+              </template>
+            </el-table-column>
+          </el-table>
+          <div class="gva-pagination">
+            <el-pagination layout="total, sizes, prev, pager, next, jumper" :current-page="page" :page-size="pageSize"
+              :page-sizes="[10, 30, 50, 100]" :total="total" @current-change="handleCurrentChange"
+              @size-change="handleSizeChange" />
+          </div>
         </el-tab-pane>
         <el-tab-pane name="Processing" label="Processing">
           <el-table ref="multipleTable" style="width: 100%" tooltip-effect="dark" :data="tableData" row-key="ID"
@@ -237,7 +337,7 @@
             <el-table-column align="left" label="Phone" prop="customerObject.phone" width="150" />
             <!-- <el-table-column align="left" label="Email" prop="customerObject.email" width="180" /> -->
             <el-table-column align="left" label="Qty" prop="quantity" width="50" />
-            <el-table-column align="left" label="Bus" prop="busNumber" width="80" />
+            <el-table-column align="left" label="Bus" prop="busNumber" width="50" />
             <el-table-column align="left" label="Seats" prop="seats" width="120" />
             <el-table-column align="left" label="Total" prop="total" width="120">
               <template #default="scope">{{ formatCurrency(scope.row.total) }}</template>
@@ -253,13 +353,14 @@
             <!-- <el-table-column align="left" label="Source" prop="source" width="120" /> -->
             <!-- <el-table-column align="left" label="Notes" prop="notes" width="120" /> -->
             <!-- <el-table-column align="left" label="Status" prop="status" width="120" /> -->
-            <el-table-column align="left" label="Time" width="180">
+
+            <el-table-column align="left" label="Booking Time" width="180">
               <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
             </el-table-column>
             <el-table-column align="left" label="Action">
               <template #default="scope">
                 <el-button type="primary" link size="small" class="table-button"
-                  @click="confirmProcessingToCompleted(scope.row)">Confirm</el-button>
+                  @click="confirmCancelToCompleted(scope.row)">Confirm</el-button>
                 <!-- <el-button type="primary" link icon="delete" size="small" @click="deleteRow(scope.row)">Delete
                 </el-button> -->
               </template>
@@ -312,7 +413,7 @@ import { getDictFunc, formatDate, formatCurrency } from '@/utils/format'
 import { VueEditor } from "vue3-editor";
 import { useRoute } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-
+import { useUserStore } from '@/pinia/modules/user'
 import {
   updateEzyAppointment,
   findEzyAppointment,
@@ -329,6 +430,7 @@ import {
   getEzyOrdersListByAppointment
 } from '@/api/ezyOrders'
 
+const userStore = useUserStore()
 const activeTab = ref("Completed")
 
 const route = useRoute()
@@ -461,12 +563,10 @@ const handleCurrentChange = (val) => {
 
 // 查询
 const getOrdersTableData = async () => {
-  debugger
   var status = activeTab.value
   const table = await getEzyOrdersListByAppointment({ appointmentID: searchInfo.value.appointmentId, status: status, page: page.value, pageSize: pageSize.value, ...searchInfo.value })
   if (table.code === 0) {
     tableData.value = table.data.list
-
     total.value = table.data.total
     page.value = table.data.page
     pageSize.value = table.data.pageSize
@@ -480,11 +580,32 @@ getOrdersTableData()
 
 const orderSelected = ref()
 
-const confirmProcessingToCompleted = async (row) => {
-  const res = await findEzyOrders({ ID: row.ID })
+const showActionConfirm = (message, confirmCallback) => {
+  ElMessageBox.confirm(
+    message,
+    'Warning',
+    {
+      confirmButtonText: 'OK',
+      cancelButtonText: 'Cancel',
+      type: 'warning',
+    }
+  )
+    .then(() => {
+      //success
+      confirmCallback()
+    })
+    .catch(() => {
+
+    })
+}
+
+const updateStatusForOrder = async (orderId, status) => {
+  const res = await findEzyOrders({ ID: orderId })
   if (res.code === 0) {
     orderSelected.value = res.data.reezyOrders
-    orderSelected.value.status = "Completed"
+    orderSelected.value.status = status
+    orderSelected.value.lastActionBy = userStore.userInfo.ID
+    orderSelected.value.lastActionTime = new Date()
   }
   var resUpdate = await updateEzyOrders(orderSelected.value)
   if (resUpdate.code === 0) {
@@ -494,8 +615,32 @@ const confirmProcessingToCompleted = async (row) => {
     })
     getOrdersTableData()
   }
-
 }
+
+const confirmProcessingToCompleted = async (row) => {
+  showActionConfirm("Confirm for this order from Processing to Completed", async () => {
+    await updateStatusForOrder(row.ID, "Completed")
+  })
+}
+
+const cancelFromCompleted = async (row) => {
+  showActionConfirm("Cancel for this order from Completed", async () => {
+    await updateStatusForOrder(row.ID, "Cancel")
+  })
+}
+
+const confirmCancelToCompleted = async (row) => {
+  showActionConfirm("Confirm for this order from Cancel to Completed", async () => {
+    await updateStatusForOrder(row.ID, "Completed")
+  })
+}
+
+const reserveFromCompleted = async (row) => {
+  showActionConfirm("Confirm for this order from Cancel to Completed", async () => {
+    await updateStatusForOrder(row.ID, "Reserve")
+  })
+}
+
 </script>
 
 <style lang="scss">

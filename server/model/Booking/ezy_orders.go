@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
+	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
 )
 
 // EzyOrders 结构体
@@ -22,6 +23,7 @@ type EzyOrders struct {
 	ArrivedNumber  int        `json:"arrivedNumber" form:"arrivedNumber" gorm:"column:arrived_number;comment:Quantity has arrived;"`
 	BusNumber      *int       `json:"busNumber" form:"busNumber" gorm:"column:bus_number;comment:;"`
 	CreatedBy      *int       `json:"createdBy" form:"createdBy" gorm:"column:created_by;comment:;"`
+	LastActionBy   *int       `json:"lastActionBy" form:"lastActionBy" gorm:"column:last_action_by;comment:;"`
 	LastEditBy     *int       `json:"lastEditBy" form:"lastEditBy" gorm:"column:last_edit_by;comment:Author ID;"`
 	LastActionTime *time.Time `json:"lastActionTime" form:"lastActionTime" gorm:"column:last_action_time;comment:;"`
 	Source         *string    `json:"source" form:"source" gorm:"column:source;comment:;"`
@@ -30,7 +32,9 @@ type EzyOrders struct {
 	CustomerID     uint       `json:"customer_id" form:"customer_id" gorm:"column:customer_id;comment:;"`
 	AppointmentID  uint       `json:"appointmentId" form:"appointmentId" gorm:"column:appointment_id;comment:;"`
 
-	CustomerObject EzyCustomer `json:"customerObject" form:"customerObject" gorm:"foreignKey:CustomerID"`
+	CustomerObject     EzyCustomer    `json:"customerObject" form:"customerObject" gorm:"foreignKey:CustomerID"`
+	CreatedByObject    system.SysUser `json:"createdByObject" form:"createdByObject" gorm:"foreignKey:CreatedBy"`
+	LastActionByObject system.SysUser `json:"lastActionByObject" form:"lastActionByObject" gorm:"foreignKey:LastActionBy"`
 }
 
 // TableName EzyOrders 表名
