@@ -82,6 +82,7 @@
             <div class="static-content-item">
               <!-- <el-divider direction="horizontal"></el-divider> -->
             </div>
+            
             <el-table :data="stageMapData" style="width: 100%">
               <el-table-column label="Column">
                 <template #default="scope">

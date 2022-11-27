@@ -1,7 +1,7 @@
 package Booking
 
 import (
-	"github.com/flipped-aurora/gin-vue-admin/server/api/v1"
+	v1 "github.com/flipped-aurora/gin-vue-admin/server/api/v1"
 	"github.com/flipped-aurora/gin-vue-admin/server/middleware"
 	"github.com/gin-gonic/gin"
 )
@@ -15,13 +15,25 @@ func (s *EzyOrdersRouter) InitEzyOrdersRouter(Router *gin.RouterGroup) {
 	ezyOrdersRouterWithoutRecord := Router.Group("ezyOrders")
 	var ezyOrdersApi = v1.ApiGroupApp.BookingApiGroup.EzyOrdersApi
 	{
-		ezyOrdersRouter.POST("createEzyOrders", ezyOrdersApi.CreateEzyOrders)   // 新建EzyOrders
-		ezyOrdersRouter.DELETE("deleteEzyOrders", ezyOrdersApi.DeleteEzyOrders) // Delete EzyOrders
+		ezyOrdersRouter.POST("createEzyOrders", ezyOrdersApi.CreateEzyOrders)             // 新建EzyOrders
+		ezyOrdersRouter.DELETE("deleteEzyOrders", ezyOrdersApi.DeleteEzyOrders)           // Delete EzyOrders
 		ezyOrdersRouter.DELETE("deleteEzyOrdersByIds", ezyOrdersApi.DeleteEzyOrdersByIds) // 批量Delete EzyOrders
-		ezyOrdersRouter.PUT("updateEzyOrders", ezyOrdersApi.UpdateEzyOrders)    // 更新EzyOrders
+		ezyOrdersRouter.PUT("updateEzyOrders", ezyOrdersApi.UpdateEzyOrders)              // 更新EzyOrders
 	}
 	{
-		ezyOrdersRouterWithoutRecord.GET("findEzyOrders", ezyOrdersApi.FindEzyOrders)        // 根据ID获取EzyOrders
-		ezyOrdersRouterWithoutRecord.GET("getEzyOrdersList", ezyOrdersApi.GetEzyOrdersList)  // 获取EzyOrders列表
+		ezyOrdersRouterWithoutRecord.GET("findEzyOrders", ezyOrdersApi.FindEzyOrders)                                 // 根据ID获取EzyOrders
+		ezyOrdersRouterWithoutRecord.GET("getEzyOrdersList", ezyOrdersApi.GetEzyOrdersList)                           // 获取EzyOrders列表
+		ezyOrdersRouterWithoutRecord.GET("getEzyOrdersListByAppointment", ezyOrdersApi.GetEzyOrdersListByAppointment) // 获取EzyOrders列表
 	}
+}
+
+func (s *EzyOrdersRouter) InitEzyOrdersPublicRouter(Router *gin.RouterGroup) {
+	ezyOrdersRouterWithoutRecord := Router.Group("ezyPublicOrders")
+	var ezyOrdersApi = v1.ApiGroupApp.BookingApiGroup.EzyOrdersApi
+	{
+		ezyOrdersRouterWithoutRecord.POST("createPublicEzyOrders", ezyOrdersApi.CreateEzyOrders)
+		// ezyOrdersRouterWithoutRecord.GET("findEzyOrders", ezyOrdersApi.FindEzyOrders)        // 根据ID获取EzyOrders
+		// ezyOrdersRouterWithoutRecord.GET("getEzyOrdersList", ezyOrdersApi.GetEzyOrdersList)  // 获取EzyOrders列表
+	}
+
 }

@@ -95,3 +95,4 @@ export const getEzyAppointmentList = (params) => {
     params
   })
 }
+

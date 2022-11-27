@@ -95,3 +95,20 @@ export const getEzyOrdersList = (params) => {
     params
   })
 }
+
+
+// @Tags EzyOrders
+// @Summary EzyOrders
+// @Security ApiKeyAuth
+// @accept application/json
+// @Produce application/json
+// @Param data query request.PageInfo true "EzyOrders"
+// @Success 200 {string} string "{"success":true,"data":{},"msg":"Successful"}"
+// @Router /ezyOrders/getEzyOrdersListByAppointment [get]
+export const getEzyOrdersListByAppointment = (params) => {
+  return service({
+    url: '/ezyOrders/getEzyOrdersListByAppointment',
+    method: 'get',
+    params
+  })
+}

@@ -35,3 +35,10 @@ export const getDictFunc = async(type) => {
   const dicts = await getDict(type)
   return dicts
 }
+
+export const formatCurrency=(value) =>{
+  return value.toLocaleString('vi-VN', {
+    style: 'currency',
+    currency: 'VND',
+  })
+}
