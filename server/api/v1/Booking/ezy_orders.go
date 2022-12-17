@@ -39,7 +39,7 @@ func (ezyOrdersApi *EzyOrdersApi) CreateEzyOrders(c *gin.Context) {
 	if ezyCustomer, err = ezyCustomerService.GetEzyCustomerByPhone(ezyOrdersReq.CustomerPhone); err != nil {
 		{
 			//handle error or not found
-			ezyCustomer := Booking.EzyCustomer{
+			ezyCustomer = Booking.EzyCustomer{
 				Name:  ezyOrdersReq.CustomerName,
 				Phone: ezyOrdersReq.CustomerPhone,
 				Email: ezyOrdersReq.CustomerEmail,

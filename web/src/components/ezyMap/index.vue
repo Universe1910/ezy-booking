@@ -311,7 +311,7 @@ const onSelect = (event, seat) => {
 @import '@vue-flow/core/dist/theme-default.css';
 
 .ezy-map {
-    width: 70%;
+    width: 100%;
     height: 440px;
 }
 
