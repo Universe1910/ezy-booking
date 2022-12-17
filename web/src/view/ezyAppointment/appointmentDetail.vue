@@ -1,6 +1,6 @@
 
 <template>
-  <el-form :model="formData" ref="formRef" :rules="rules" label-position="left" label-width="120px" size="medium"
+  <el-form :model="appointmentData" ref="formRef" :rules="rules" label-position="left" label-width="120px" size="medium"
     @submit.prevent>
     <el-row>
       <el-col :span="12" class="grid-cell">
@@ -81,7 +81,7 @@
       </el-col>
     </el-row>
     <div class="static-content-item">
-      <!-- <div v-html="<b>Stage Map</b>"></div> -->
+      <EzyMap ref="ezyMapRef" :data="stageAreaData" :booked="booked"  ></EzyMap>
     </div>
     <div class="static-content-item">
       <el-divider direction="horizontal"></el-divider>
@@ -392,7 +392,7 @@
       </el-card>
     </div>
     <el-form-item label="Quick Note" prop="appointmentNote" class="label-center-align">
-      <vue-editor v-model="formData.appointmentNote"></vue-editor>
+      <vue-editor v-model="appointmentData.appointmentNote"></vue-editor>
     </el-form-item>
     <div class="static-content-item">
       <el-button @click="updateAppointment" type="primary">Save Quick Note</el-button>
@@ -414,11 +414,11 @@ import { VueEditor } from "vue3-editor";
 import { useRoute } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useUserStore } from '@/pinia/modules/user'
+import EzyMap from '@/components/ezyMap/index.vue'
 import {
   updateEzyAppointment,
   findEzyAppointment,
 } from '@/api/ezyAppointment'
-
 
 import {
   createEzyOrders,
@@ -435,7 +435,9 @@ const activeTab = ref("Completed")
 
 const route = useRoute()
 const vForm = ref()
-const formData = ref({
+
+const ezyMapRef = ref()
+const appointmentData = ref({
   appointmentName: "",
   slug: "",
   singer: "",
@@ -459,7 +461,10 @@ const formData = ref({
 },
 )
 
+
+
 const stageMapData = ref([])
+
 const stageAreaData = ref([
   {
     area: '',
@@ -469,6 +474,8 @@ const stageAreaData = ref([
   }
 ])
 
+const booked = ref([])
+
 const rules = ref({})
 const searchInfo = ref({ appointmentId: Number(route.params.id) })
 
@@ -477,19 +484,26 @@ const getEzyAppointmentById = async () => {
   let appointmentId = searchInfo.value.appointmentId;
   var res = await findEzyAppointment({ ID: appointmentId });
 
-  formData.value = res.data.reezyAppointment;
-  if (formData.value.stageMap) {
-    var stageMapObject = JSON.parse(formData.value.stageMap)
+  appointmentData.value = res.data.reezyAppointment;
+  if (appointmentData.value.stageMap) {
+    var stageMapObject = JSON.parse(appointmentData.value.stageMap)
     stageMapData.value = stageMapObject
+    // debugger;
+    console.log(stageMapData.value)
   }
-  if (formData.value.stageArea) {
-    var areaObject = JSON.parse(formData.value.stageArea)
+
+  if (appointmentData.value.stageArea) {
+    var areaObject = JSON.parse(appointmentData.value.stageArea)
     stageAreaData.value = areaObject
+    console.log(stageAreaData.value)
   }
-  if (formData.value.disableIndex) {
-    formData.value.disableIndex = JSON.parse(formData.value.disableIndex)
+  if (appointmentData.value.disableIndex) {
+    appointmentData.value.disableIndex = JSON.parse(appointmentData.value.disableIndex)
   }
-  console.log(formData.value)
+  console.log(appointmentData.value)
+  
+  ezyMapRef.value.data = stageAreaData.value
+  ezyMapRef.value.initMap()
 }
 
 
@@ -497,19 +511,18 @@ getEzyAppointmentById();
 
 const updateAppointment = async () => {
   vForm.value?.validate(async (valid) => {
-    console.log("update appointment")
     if (!valid) return
     //Slug
-    var slug = toSlug(formData.value.appointmentName)
-    formData.value.slug = slug;
+    var slug = toSlug(appointmentData.value.appointmentName)
+    appointmentData.value.slug = slug;
     //edit doan nay
     //Map Object
-    formData.value.stageMap = JSON.stringify(getStageMap())
+    appointmentData.value.stageMap = JSON.stringify(getStageMap())
     //Stage Object
-    formData.value.stageArea = JSON.stringify(getStageArea())
+    appointmentData.value.stageArea = JSON.stringify(getStageArea())
     //disable index
-    formData.value.disableIndex = JSON.stringify(formData.value.disableIndex)
-    var res = await updateEzyAppointment(formData.value)
+    appointmentData.value.disableIndex = JSON.stringify(appointmentData.value.disableIndex)
+    var res = await updateEzyAppointment(appointmentData.value)
     if (res.code === 0) {
       ElMessage({
         type: 'success',
@@ -570,7 +583,6 @@ const getOrdersTableData = async () => {
     total.value = table.data.total
     page.value = table.data.page
     pageSize.value = table.data.pageSize
-    console.log(tableData.value)
   }
 }
 
